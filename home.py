@@ -5,10 +5,11 @@ import pygal
 app = Flask(__name__)
 
 @app.route('/')
-def charts():
+def home():
     pie_chart = pygal.Pie()
     xmldoc = minidom.parse("open-data.xml")
     list = xmldoc.getElementsByTagName("EstablishmentDetail")
+    html = ""
     rating_1 = 0
     rating_2 = 0
     rating_3 = 0
@@ -19,7 +20,17 @@ def charts():
     for n in list:
         type = n.getElementsByTagName("BusinessType")[0].firstChild.data
         if type == "Restaurant/Cafe/Canteen":
+            business = n.getElementsByTagName("BusinessName")[0].firstChild.data
             rating = n.getElementsByTagName("RatingValue")[0].firstChild.data
+
+            if n.getElementsByTagName("RatingDate")[0].firstChild:
+                date = n.getElementsByTagName("RatingDate")[0].firstChild.data
+            else:
+                date = "none"
+
+            html += "<strong>" + business + "</strong> rated " + rating + " on " + date + "<br />"
+
+
             if rating == "1":
                 rating_1 += 1
             if rating == "2":
@@ -42,4 +53,4 @@ def charts():
     pie_chart.add('Awaiting inspection', no_rating)
 
     chart = pie_chart.render_data_uri()
-    return render_template( 'chart.html', chart = chart)
+    return render_template( 'home.html', rating_chart = chart, data_list = html)
