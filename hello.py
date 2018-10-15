@@ -4,32 +4,7 @@ import pygal                                                       # First impor
 
 app = Flask(__name__)
 
-@app.route("/")
-def hello():
-    html = "<h1>Restaurants in Durham</h1>"
-
-    xmldoc = minidom.parse("open-data.xml")
-    list = xmldoc.getElementsByTagName("EstablishmentDetail")
-    for n in list:
-        business = n.getElementsByTagName("BusinessName")[0].firstChild.data
-        rating = n.getElementsByTagName("RatingValue")[0].firstChild.data
-        type = n.getElementsByTagName("BusinessType")[0].firstChild.data
-
-        if rating == "AwaitingInspection":
-            rating = "pending"
-
-        if n.getElementsByTagName("RatingDate")[0].firstChild:
-            date = n.getElementsByTagName("RatingDate")[0].firstChild.data
-        else:
-            date = "none"
-
-        if type == "Restaurant/Cafe/Canteen":
-            html += "<br/>"
-            html += "<strong>" + business + "</strong> rated " + rating + " on " + date
-
-    return html
-
-@app.route('/ratings/')
+@app.route('/')
 def charts():
     pie_chart = pygal.Pie()
     xmldoc = minidom.parse("open-data.xml")
@@ -68,3 +43,28 @@ def charts():
 
     chart = pie_chart.render_data_uri()
     return render_template( 'chart.html', chart = chart)
+
+    @app.route("/data")
+    def hello():
+        html = "<h1>Restaurants in Durham</h1>"
+
+        xmldoc = minidom.parse("open-data.xml")
+        list = xmldoc.getElementsByTagName("EstablishmentDetail")
+        for n in list:
+            business = n.getElementsByTagName("BusinessName")[0].firstChild.data
+            rating = n.getElementsByTagName("RatingValue")[0].firstChild.data
+            type = n.getElementsByTagName("BusinessType")[0].firstChild.data
+
+            if rating == "AwaitingInspection":
+                rating = "pending"
+
+            if n.getElementsByTagName("RatingDate")[0].firstChild:
+                date = n.getElementsByTagName("RatingDate")[0].firstChild.data
+            else:
+                date = "none"
+
+            if type == "Restaurant/Cafe/Canteen":
+                html += "<br/>"
+                html += "<strong>" + business + "</strong> rated " + rating + " on " + date
+
+        return html
