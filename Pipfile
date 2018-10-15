@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 gunicorn = "==19.9.0"
 Flask = "==1.0.2"
+pygal = "*"
+lxml = "*"
+cairosvg = "*"
 
 [dev-packages]
 
